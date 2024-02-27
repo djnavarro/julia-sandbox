@@ -18,20 +18,40 @@ states = DataFrame(
     ]
 )
 
-# imports a data frame from csv, treating "NA" as missing
-starwars = DataFrame(CSV.File("starwars.csv"; missingstring = "NA"))
+# reads a csv file, creating a CSV.file object
+# https://csv.juliadata.org/stable/reading.html#CSV.File
+starwars_csv = CSV.File("starwars.csv"; missingstring = "NA")
 
-# access the columns directly
+# CSV.file objects are row-oriented (like CSV itself): this is a "CSV.row"
+# object with the entries from the first row of the CSV file
+starwars_csv[1]
+
+# this returns the actual value
+starwars_csv[1].gender
+
+# in practice we don't work with the CSV object, we convert it to a data frame
+starwars = DataFrame(starwars_csv)
+
+# data frames are columnar: we can access the columns directly, and this is a vector
 starwars.name 
 
-# subsetting by indices
-starwars[1:3, 1:5]
+# subsetting by indices is similar to Matlab & R
+starwars[1:6, 1:5]
 
-# subsetting with column names
-starwars[:, [:gender, :homeworld]]
+# subsetting can also take a vector of column names (more precisely this is a
+# vector of symbols)
+starwars[1:6, [:name, :gender, :homeworld]]
 
-# subsetting with logicals (note use of . to vectorise the operators)
-starwars[starwars.skin_color .== "fair", :]starwars[@. startswith(starwars.name, "L"), :] 
+# we can subset rows with a vector of booleans (note use of . to vectorise the operators)
+# (technically fair_skinned here is a BitVector but it behaves as a vector of booleans)
+fair_skinned = starwars.skin_color .== "fair"
+
+# printing fair_skinned doesn't look like a vector of "true/false" values, but it's
+# purely a printing thing: this returns a Bool
+fair_skinned[1]
+
+# anyway... back on topic...
+starwars[fair_skinned, :]
 
 # choosing columns with selectors
 starwars[:, Not(:hair_color)]
@@ -41,5 +61,5 @@ starwars[:, All()]
 # the Cols() selector can take an anonymous function (defined with ->)
 starwars[:, Cols(x -> endswith(x, "color"))] # see also startswith(), contains() 
 
-# groupby() and combine() allow summaries 
+# groupby() and combine() allow summaries; in this case select a random value
 combine(groupby(starwars, :gender), :mass => rand) 
