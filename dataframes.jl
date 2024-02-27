@@ -1,6 +1,7 @@
 using DataFrames
 using CSV
 using Statistics
+using Pipe: @pipe
 
 # manually defines a data frame 
 states = DataFrame(
@@ -63,3 +64,17 @@ starwars[:, Cols(x -> endswith(x, "color"))] # see also startswith(), contains()
 
 # groupby() and combine() allow summaries; in this case select a random value
 combine(groupby(starwars, :gender), :mass => rand) 
+
+# using pipes and anonymous functions to turn this into a dplyr-like workflow
+starwars |>
+    (x -> groupby(x, :gender)) |>
+    (x -> combine(x, :mass => rand))
+
+# note that the Pipes package provides a more powerful piping operator
+# than julia's base pipe, and supports _ placeholder syntax
+# https://juliapackages.com/p/pipe
+@pipe starwars |>
+    groupby(_, :gender) |>
+    combine(_, :mass => rand)
+
+
