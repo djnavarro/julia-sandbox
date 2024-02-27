@@ -3,20 +3,11 @@ using CSV
 using Statistics
 using Pipe: @pipe
 
-# manually defines a data frame 
-states = DataFrame(
-    name = [
-        "New South Wales", "Victoria", "Queensland", "Western Australia", 
-        "South Australia", "Tasmania", "Australian Capital Territory",
-        "Northern Territory"
-    ],
-    capital = [
-        "Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Hobart", 
-        "Canberra", "Darwin"
-    ],
-    population = [
-        8339347, 6812477, 5459413, 2527013, 1851704, 572780, 466813, 252473
-    ]
+# manually define a data frame 
+east_states = DataFrame(
+    state = ["New South Wales", "Victoria", "Queensland"],
+    capital = ["Sydney", "Melbourne", "Brisbane"],
+    population = [8339347, 6812477, 5459413]
 )
 
 # reads a csv file, creating a CSV.file object
